@@ -16,6 +16,7 @@ package com.example.android.shushme;
 * limitations under the License.
 */
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -30,11 +31,14 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlacePicker;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -123,6 +127,20 @@ public class MainActivity extends AppCompatActivity implements
         }
         // TODO (1) Create a PlacePicker.IntentBuilder and call startActivityForResult
         // TODO (2) Handle GooglePlayServices exceptions
+
+        try {
+            // Start a new Activity for the Place Picker API, this will trigger {@code #onActivityResult}
+            // when a place is selected or with the user cancels.
+            PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+            Intent i = builder.build(this);
+            startActivityForResult(i, PLACE_PICKER_REQUEST);
+        } catch (GooglePlayServicesRepairableException e) {
+            Log.e(TAG, String.format("GooglePlayServices Not Available [%s]", e.getMessage()));
+        } catch (GooglePlayServicesNotAvailableException e) {
+            Log.e(TAG, String.format("GooglePlayServices Not Available [%s]", e.getMessage()));
+        } catch (Exception e) {
+            Log.e(TAG, String.format("PlacePicker Exception: %s", e.getMessage()));
+        }
 
     }
 
